@@ -1,6 +1,15 @@
-import Course from "./components/course"
+import Header from "./components/header"
+import Content from "./components/content/content"
+import Total from "./components/content/total/total"
+// 1h30min
 
-const App = ({Course}) => {
+const Course = ({ course }) => (
+    <div>
+        <Header course= { course } />
+    </div>
+)
+
+const App = () => {
     const course = {
       id: 1,
       name: 'Half Stack application development',
@@ -23,7 +32,13 @@ const App = ({Course}) => {
       ]
     }
   
-    return <Course course={course} />
+    return (
+        <div>
+            <Course course={course} />
+            <Content course={course} />
+            <Total parts={course.parts} />
+        </div>
+    )
   }
   
   export default App
