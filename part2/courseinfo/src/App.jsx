@@ -1,5 +1,5 @@
 import Course from "./components/course/courses"
-// 4h30min
+// 5h30min
 
 const App = () => {
     const courses = [
