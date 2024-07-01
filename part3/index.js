@@ -5,6 +5,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cors())
+app.use(express.static("dist"))
 // morgan.token("req-body", (req) => {
 //   return JSON.stringify(req.body)
 // })
@@ -41,10 +42,6 @@ const generateId = () => {
   const randomLetters = letters[Math.floor(Math.random() * letters.length)]
   return String(randomId + randomLetters)
 }
-
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>")
-})
 
 app.get("/info", (request, response) => {
   response.send(
