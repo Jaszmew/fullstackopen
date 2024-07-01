@@ -50,11 +50,11 @@ app.get("/info", (request, response) => {
   )
 })
 
-app.get("/api/persons", (request, response) => {
+app.get("/", (request, response) => {
   response.json(phoneBook)
 })
 
-app.get("/api/persons/:id", (request, response) => {
+app.get("/:id", (request, response) => {
   const id = request.params.id
   const person = phoneBook.find((person) => person.id === id)
 
@@ -65,7 +65,7 @@ app.get("/api/persons/:id", (request, response) => {
   }
 })
 
-app.post("/api/persons", (request, response) => {
+app.post("/", (request, response) => {
   const body = request.body
 
   const persons = []
