@@ -54,7 +54,7 @@ app.get("/api/persons", (request, response) => {
   response.json(phoneBook)
 })
 
-app.get("/api/persons/:id", (request, response) => {
+app.put("/api/persons/:id", (request, response) => {
   const id = request.params.id
   const person = phoneBook.find((person) => person.id === id)
 
