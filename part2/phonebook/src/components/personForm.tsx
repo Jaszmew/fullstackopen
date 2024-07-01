@@ -7,6 +7,7 @@ export const PersonForm = ({ persons, setPersons, setMessage }) => {
   const [number, setNumber] = useState("")
 
   const updateNumber = async (person, number) => {
+    setNumber(number)
     try {
       window.confirm(
         `${newName} is already in the phone book, replace their old number?`
