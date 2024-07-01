@@ -14,3 +14,10 @@ To package.json -> scripts:
 "server": "json-server -p3001 --watch db.json"
 
 npm run server
+
+
+
+npm install express
+
+npm install --save-dev nodemon
+

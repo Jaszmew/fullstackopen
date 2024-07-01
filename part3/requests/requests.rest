@@ -1,0 +1,13 @@
+GET http://localhost:3001/api/persons/
+
+###
+DELETE http://localhost:3001/api/persons/11
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "asd",
+    "number": 123
+}
