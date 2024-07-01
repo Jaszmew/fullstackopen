@@ -1,31 +1,50 @@
 import React from "react"
 import { useState } from "react"
+import personsService from "../services/persons"
 
-export const PersonForm = (props) => {
+export const PersonForm = ({ persons, setPersons, setMessage }) => {
   const [newName, setNewName] = useState("")
   const [number, setNumber] = useState("")
 
+  const updateNumber = async (person, number) => {
+    try {
+      window.confirm(
+        `${newName} is already in the phone book, replace their old number?`
+      )
+      await personsService.update(person.id, { ...person, number: number })
+      setMessage(`Updated number for ${person.name}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   const addEntry = (event) => {
     event.preventDefault()
-    console.log(props)
     let includesName = false
-    props.persons.forEach((person) => {
+    persons.forEach((person) => {
       if (person.name === newName) {
         includesName = true
-        return window.alert(`${newName} is already in the phone book`)
+        updateNumber(person, number)
       }
     })
     if (!includesName) {
       const nameObject = {
         name: newName,
         number: number,
-        id: props.persons.length + 1,
       }
-      console.log(nameObject)
-      props.setPersons(props.persons.concat(nameObject))
-      setNewName("")
-      setNumber("")
+      personsService.create(nameObject).then((data) => {
+        setPersons(persons.concat(data))
+      })
+      setMessage(`Added ${newName} with number: ${number}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
     }
+    setNewName("")
+    setNumber("")
   }
 
   const handleNameChange = (event) => {
@@ -39,10 +58,20 @@ export const PersonForm = (props) => {
     <div>
       <form onSubmit={addEntry}>
         <p>
-          Name: <input onChange={handleNameChange} />
+          Name:
+          <input
+            value={newName}
+            onChange={handleNameChange}
+            className="nameInput"
+          />
         </p>
         <p>
-          Number: <input onChange={handleNumberChange} />
+          Number:
+          <input
+            value={number}
+            onChange={handleNumberChange}
+            className="numberInput"
+          />
         </p>
         <button type="submit">Add</button>
       </form>

@@ -1,0 +1,16 @@
+npm create vite@latest part1 -- --template react
+
+cd folder
+
+npm install
+
+npm install axios
+
+create db.json in root
+
+npm install json-server --save-dev
+
+To package.json -> scripts:
+"server": "json-server -p3001 --watch db.json"
+
+npm run server
