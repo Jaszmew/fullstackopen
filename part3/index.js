@@ -13,6 +13,21 @@ app.use(express.static("dist"))
 //   ":method :url :status :res[content-length] - :response-time ms :req-body"
 // app.use(morgan(customFormat))
 
+const mongoose = require("mongoose")
+
+const url = process.env.MONGODB_URI
+
+mongoose.set("strictQuery", false)
+
+mongoose.connect(url)
+
+const phoneBookSchema = new mongoose.Schema({
+  name: String,
+  phone: String,
+})
+
+const Entry = mongoose.model("Entry", phoneBookSchema)
+
 let phoneBook = [
   {
     id: "1",
@@ -45,13 +60,24 @@ const generateId = () => {
 
 app.get("/info", (request, response) => {
   response.send(
-    `<p>Phone book has info for ${phoneBook.length}</p>
+    `<p>Phone book has info for ${phoneBook.length} people</p>
     <p>${new Date(Date.now())}</p>`
   )
 })
 
 app.get("/api/persons", (request, response) => {
   response.json(phoneBook)
+})
+
+app.get("/api/persons/:id", (request, response) => {
+  const id = request.params.id
+  const person = phoneBook.find((person) => person.id === id)
+
+  if (person) {
+    response.json(person)
+  } else {
+    response.status(404).end()
+  }
 })
 
 app.put("/api/persons/:id", (request, response) => {
