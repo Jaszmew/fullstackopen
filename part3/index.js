@@ -51,10 +51,12 @@ const generateId = () => {
 }
 
 app.get("/info", (request, response) => {
-  response.send(
-    `<p>Phone book has info for ${Entry.length} people</p>
-    <p>${new Date(Date.now())}</p>`
-  )
+  Entry.countDocuments({}).then((count) => {
+    response.send(
+      `<p>Phone book has info for ${count} people</p>
+      <p>${new Date().toString()}</p>`
+    )
+  })
 })
 
 app.get("/api/persons", (request, response) => {
@@ -70,53 +72,56 @@ app.get("/api/persons/:id", (request, response) => {
 })
 
 app.put("/api/persons/:id", (request, response) => {
-  const id = request.params.id
-  const person = phoneBook.find((person) => person.id === id)
+  const body = request.body
 
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
+  const updateEntry = {
+    name: body.name,
+    phone: body.phone,
   }
+  Entry.findByIdAndUpdate(request.params.id, updateEntry).then(
+    (updateEntry) => {
+      if (updateEntry) {
+        response.json(updateEntry)
+      } else {
+        response.status(404).end()
+      }
+    }
+  )
 })
 
 app.post("/api/persons", (request, response) => {
   const body = request.body
-
-  if (!body.content) {
-    return response.status(400).json({ error: "Content missing" })
-  }
 
   if (!body.name) {
     return response.status(400).json({
       error: "Name is missing",
     })
   }
-  if (!body.number) {
+  if (!body.phone) {
     return response.status(400).json({
       error: "Number is missing",
     })
   }
-  if (Entry.includes(body.name)) {
-    return response.status(400).json({
-      error: "Names must be unique",
+  Entry.findOne({ name: body.name })
+    .then((existingEntry) => {
+      if (existingEntry) {
+        return response.status(400).json({ error: "Name must be unique" })
+      }
+      const entry = new Entry({
+        name: body.name,
+        phone: body.phone,
+        id: generateId(),
+      })
+      entry.save()
     })
-  }
 
-  const entry = new Entry({
-    name: body.name,
-    number: body.number,
-    id: generateId(),
-  })
-
-  entry.save().then((savedEntry) => {
-    response.json(savedEntry)
-  })
+    .then((savedEntry) => {
+      response.json(savedEntry)
+    })
 })
 
 app.delete("/api/persons/:id", (request, response) => {
-  const id = request.params.id
-  persons = phoneBook.filter((person) => person.id !== id)
-
-  response.status(204).end()
+  Entry.findByIdAndDelete(request.params.id).then((deleteEntry) => {
+    response.status(204).end()
+  })
 })
