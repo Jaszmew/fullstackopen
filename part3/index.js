@@ -1,32 +1,24 @@
+require("dotenv").config()
 const express = require("express")
 const morgan = require("morgan")
 const cors = require("cors")
 const app = express()
+const Entry = require("./models/entry")
 
 app.use(express.json())
 app.use(cors())
 app.use(express.static("dist"))
+
+const PORT = process.env.PORT
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`)
+})
 // morgan.token("req-body", (req) => {
 //   return JSON.stringify(req.body)
 // })
 // const customFormat =
 //   ":method :url :status :res[content-length] - :response-time ms :req-body"
 // app.use(morgan(customFormat))
-
-const mongoose = require("mongoose")
-
-const url = process.env.MONGODB_URI
-
-mongoose.set("strictQuery", false)
-
-mongoose.connect(url)
-
-const phoneBookSchema = new mongoose.Schema({
-  name: String,
-  phone: String,
-})
-
-const Entry = mongoose.model("Entry", phoneBookSchema)
 
 let phoneBook = [
   {
@@ -60,24 +52,21 @@ const generateId = () => {
 
 app.get("/info", (request, response) => {
   response.send(
-    `<p>Phone book has info for ${phoneBook.length} people</p>
+    `<p>Phone book has info for ${request.length} people</p>
     <p>${new Date(Date.now())}</p>`
   )
 })
 
 app.get("/api/persons", (request, response) => {
-  response.json(phoneBook)
+  Entry.find({}).then((entries) => {
+    response.json(entries)
+  })
 })
 
 app.get("/api/persons/:id", (request, response) => {
-  const id = request.params.id
-  const person = phoneBook.find((person) => person.id === id)
-
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  Entry.findById(request.params.id).then((entry) => {
+    response.json(entry)
+  })
 })
 
 app.put("/api/persons/:id", (request, response) => {
@@ -94,11 +83,6 @@ app.put("/api/persons/:id", (request, response) => {
 app.post("/api/persons", (request, response) => {
   const body = request.body
 
-  const persons = []
-  phoneBook.forEach((person) => {
-    persons.push(person.name)
-  })
-
   if (!body.name) {
     return response.status(400).json({
       error: "Name is missing",
@@ -109,19 +93,21 @@ app.post("/api/persons", (request, response) => {
       error: "Number is missing",
     })
   }
-  if (persons.includes(body.name)) {
+  if (request.includes(body.name)) {
     return response.status(400).json({
       error: "Names must be unique",
     })
   }
 
-  const person = {
+  const entry = new Entry({
     name: body.name,
     number: body.number,
     id: generateId(),
-  }
-  phoneBook = phoneBook.concat(person)
-  response.json(person)
+  })
+
+  entry.save().then((savedEntry) => {
+    response.json(savedEntry)
+  })
 })
 
 app.delete("/api/persons/:id", (request, response) => {
@@ -129,9 +115,4 @@ app.delete("/api/persons/:id", (request, response) => {
   persons = phoneBook.filter((person) => person.id !== id)
 
   response.status(204).end()
-})
-
-const PORT = process.env.PORT || 3001
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
 })
