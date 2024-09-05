@@ -52,7 +52,7 @@ const generateId = () => {
 
 app.get("/info", (request, response) => {
   response.send(
-    `<p>Phone book has info for ${request.length} people</p>
+    `<p>Phone book has info for ${Entry.length} people</p>
     <p>${new Date(Date.now())}</p>`
   )
 })
