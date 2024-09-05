@@ -83,8 +83,24 @@ app.put("/api/persons/:id", (request, response) => {
 app.post("/api/persons", (request, response) => {
   const body = request.body
 
-  if (body.content === undefined) {
+  if (!body.content) {
     return response.status(400).json({ error: "Content missing" })
+  }
+
+  if (!body.name) {
+    return response.status(400).json({
+      error: "Name is missing",
+    })
+  }
+  if (!body.number) {
+    return response.status(400).json({
+      error: "Number is missing",
+    })
+  }
+  if (Entry.includes(body.name)) {
+    return response.status(400).json({
+      error: "Names must be unique",
+    })
   }
 
   const entry = new Entry({
