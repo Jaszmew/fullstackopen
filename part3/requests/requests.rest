@@ -1,13 +1,13 @@
-GET http://localhost:3001/info
+GET https://fullstackopen-6b8m.onrender.com/info
 
 ###
-GET http://localhost:3001/api/persons/
+GET https://fullstackopen-6b8m.onrender.com/api/persons/
 
 ###
-GET http://localhost:3001/api/persons/66d992bd3f63e9be9623f678
+GET https://fullstackopen-6b8m.onrender.com/api/persons/66e003e78d04e9c051109c3f
 
 ###
-PUT http://localhost:3001/api/persons/66dfe7d4c3cb96879f3a0593
+PUT https://fullstackopen-6b8m.onrender.com/api/persons/66e003e78d04e9c051109c3f
 Content-Type: application/json
 
 {
@@ -15,10 +15,10 @@ Content-Type: application/json
     "phone": "1235"
 }
 ###
-DELETE http://localhost:3001/api/persons/66dfecba4878551fedc5a0a0
+DELETE https://fullstackopen-6b8m.onrender.com/api/persons/66e00487b71825502d3a7963
 
 ###
-POST http://localhost:3001/api/persons
+POST https://fullstackopen-6b8m.onrender.com/api/persons
 Content-Type: application/json
 
 {
