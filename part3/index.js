@@ -22,7 +22,7 @@ app.listen(PORT, () => {
 
 const generateId = () => {
   const randomId = Math.floor(Math.random() * 1000)
-  const letters = ["e", "b", "c"]
+  const letters = ["e", "b", "c", "g"]
   const randomLetters = letters[Math.floor(Math.random() * letters.length)]
   return String(randomId + randomLetters)
 }
