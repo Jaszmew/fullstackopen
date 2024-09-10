@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://fullstackopen-6b8m.onrender.com",
+        target: "http://localhost:3001",
         changeOrigin: true,
       },
     },
