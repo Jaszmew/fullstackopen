@@ -9,14 +9,16 @@ export const PersonForm = ({ persons, setPersons, setMessage }) => {
   const updatePhone = async (person, phone) => {
     setPhone(phone)
     try {
-      window.confirm(
+      const confirm = window.confirm(
         `${newName} is already in the phone book, replace their old number?`
       )
-      await personsService.update(person.id, { ...person, phone: phone })
-      setMessage(`Updated number for ${person.name}`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 3000)
+      if (confirm) {
+        await personsService.update(person.id, { ...person, phone: phone })
+        setMessage(`Updated number for ${person.name}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 3000)
+      }
     } catch (err) {
       console.log(err)
     }
@@ -37,15 +39,16 @@ export const PersonForm = ({ persons, setPersons, setMessage }) => {
         phone: phone,
       }
       personsService.create(nameObject).then((data) => {
+        console.log(nameObject)
         setPersons(persons.concat(data))
+        setMessage(`Added ${newName} with number: ${phone}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 3000)
+        setNewName("")
+        setPhone("")
       })
-      setMessage(`Added ${newName} with number: ${phone}`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 3000)
     }
-    setNewName("")
-    setPhone("")
   }
 
   const handleNameChange = (event) => {
