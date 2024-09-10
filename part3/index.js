@@ -81,7 +81,7 @@ app.put("/api/persons/:id", (request, response) => {
   Entry.findByIdAndUpdate(request.params.id, updateEntry).then(
     (updateEntry) => {
       if (updateEntry) {
-        response.json(updateEntry)
+        response.json()
       } else {
         response.status(404).end()
       }
@@ -102,22 +102,18 @@ app.post("/api/persons", (request, response) => {
       error: "Number is missing",
     })
   }
-  Entry.findOne({ name: body.name })
-    .then((existingEntry) => {
-      if (existingEntry) {
-        return response.status(400).json({ error: "Name must be unique" })
-      }
+  Entry.findOne({ name: body.name }).then((existingEntry) => {
+    if (!existingEntry) {
       const entry = new Entry({
         name: body.name,
         phone: body.phone,
         id: generateId(),
       })
       entry.save()
-    })
-
-    .then((savedEntry) => {
-      response.json(savedEntry)
-    })
+      return response.status(200).end()
+    }
+    return response.status(400).json({ error: "Name must be unique" })
+  })
 })
 
 app.delete("/api/persons/:id", (request, response) => {
