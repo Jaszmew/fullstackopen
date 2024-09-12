@@ -79,6 +79,10 @@ app.get("/api/persons/:id", (request, response, next) => {
 app.put("/api/persons/:id", (request, response, next) => {
   const body = request.body
 
+  if (!body.phone) {
+    return response.status(400).json({ error: "Number missing" })
+  }
+
   const entry = {
     name: body.name,
     phone: body.phone,
@@ -92,6 +96,10 @@ app.put("/api/persons/:id", (request, response, next) => {
 
 app.post("/api/persons", (request, response, next) => {
   const body = request.body
+
+  if (!body) {
+    return response.status(400).json({ error: "Data missing" })
+  }
 
   if (!body.name) {
     return response.status(400).json({
