@@ -1,5 +1,5 @@
 import axios from "axios"
-const baseUrl = "https://fullstackopen-6b8m.onrender.com"
+const baseUrl = "/api/persons"
 
 const getAll = () => {
   const request = axios.get(baseUrl)
@@ -16,8 +16,8 @@ const update = (id, newObject) => {
   return request.then((response) => response.data)
 }
 
-// const deleteData = async (id) => {
-//   return await axios.delete(`${baseUrl}/${id}`)
-// }
+const deleteData = async (id) => {
+  return await axios.delete(`${baseUrl}/${id}`)
+}
 
-export default { getAll, create, update }
+export default { getAll, create, update, deleteData }

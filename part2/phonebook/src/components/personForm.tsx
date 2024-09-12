@@ -4,15 +4,15 @@ import personsService from "../services/persons"
 
 export const PersonForm = ({ persons, setPersons, setMessage }) => {
   const [newName, setNewName] = useState("")
-  const [number, setNumber] = useState("")
+  const [phone, setPhone] = useState("")
 
-  const updateNumber = async (person, number) => {
-    setNumber(number)
+  const updatePhone = async (person, phone) => {
+    setPhone(phone)
     try {
       window.confirm(
         `${newName} is already in the phone book, replace their old number?`
       )
-      await personsService.update(person.id, { ...person, number: number })
+      await personsService.update(person.id, { ...person, phone: phone })
       setMessage(`Updated number for ${person.name}`)
       setTimeout(() => {
         setMessage(null)
@@ -28,32 +28,32 @@ export const PersonForm = ({ persons, setPersons, setMessage }) => {
     persons.forEach((person) => {
       if (person.name === newName) {
         includesName = true
-        updateNumber(person, number)
+        updatePhone(person, phone)
       }
     })
     if (!includesName) {
       const nameObject = {
         name: newName,
-        number: number,
+        phone: phone,
       }
       personsService.create(nameObject).then((data) => {
         setPersons(persons.concat(data))
       })
-      setMessage(`Added ${newName} with number: ${number}`)
+      setMessage(`Added ${newName} with number: ${phone}`)
       setTimeout(() => {
         setMessage(null)
       }, 3000)
     }
     setNewName("")
-    setNumber("")
+    setPhone("")
   }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
 
-  const handleNumberChange = (event) => {
-    setNumber(event.target.value)
+  const handlePhoneChange = (event) => {
+    setPhone(event.target.value)
   }
   return (
     <div>
@@ -67,10 +67,10 @@ export const PersonForm = ({ persons, setPersons, setMessage }) => {
           />
         </p>
         <p>
-          Number:
+          Phone number:
           <input
-            value={number}
-            onChange={handleNumberChange}
+            value={phone}
+            onChange={handlePhoneChange}
             className="numberInput"
           />
         </p>
