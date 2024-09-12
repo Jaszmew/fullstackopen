@@ -15,13 +15,13 @@ export const Persons = ({ persons, filter, setPersons }) => {
   const personList = persons.map((person) => (
     <div key={person.id}>
       {person.name} {person.number}
-      <button onClick={() => deletePerson(person)}>Delete</button>
+      {/* <button onClick={() => deletePerson(person)}>Delete</button> */}
     </div>
   ))
   const filteredPersons = filter.map((person) => (
     <div key={person.id}>
       {person.name} {person.number}
-      <button onClick={() => deletePerson(person)}>Delete</button>
+      {/* <button onClick={() => deletePerson(person)}>Delete</button> */}
     </div>
   ))
 

@@ -116,8 +116,8 @@ app.post("/api/persons", (request, response) => {
   })
 })
 
-app.delete("/api/persons/:id", (request, response) => {
-  Entry.findByIdAndDelete(request.params.id).then((deleteEntry) => {
-    response.status(204).end()
-  })
-})
+// app.delete("/api/persons/:id", (request, response) => {
+//   Entry.findByIdAndDelete(request.params.id).then((deleteEntry) => {
+//     response.status(204).end()
+//   })
+// })
