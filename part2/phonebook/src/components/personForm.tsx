@@ -4,21 +4,19 @@ import personsService from "../services/persons"
 
 export const PersonForm = ({ persons, setPersons, setMessage }) => {
   const [newName, setNewName] = useState("")
-  const [phone, setPhone] = useState("")
+  const [number, setNumber] = useState("")
 
-  const updatePhone = async (person, phone) => {
-    setPhone(phone)
+  const updateNumber = async (person, number) => {
+    setNumber(number)
     try {
-      const confirm = window.confirm(
+      window.confirm(
         `${newName} is already in the phone book, replace their old number?`
       )
-      if (confirm) {
-        await personsService.update(person.id, { ...person, phone: phone })
-        setMessage(`Updated number for ${person.name}`)
-        setTimeout(() => {
-          setMessage(null)
-        }, 3000)
-      }
+      await personsService.update(person.id, { ...person, number: number })
+      setMessage(`Updated number for ${person.name}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
     } catch (err) {
       console.log(err)
     }
@@ -30,33 +28,32 @@ export const PersonForm = ({ persons, setPersons, setMessage }) => {
     persons.forEach((person) => {
       if (person.name === newName) {
         includesName = true
-        updatePhone(person, phone)
+        updateNumber(person, number)
       }
     })
     if (!includesName) {
       const nameObject = {
         name: newName,
-        phone: phone,
+        number: number,
       }
       personsService.create(nameObject).then((data) => {
-        console.log(nameObject)
         setPersons(persons.concat(data))
-        setMessage(`Added ${newName} with number: ${phone}`)
-        setTimeout(() => {
-          setMessage(null)
-        }, 3000)
-        setNewName("")
-        setPhone("")
       })
+      setMessage(`Added ${newName} with number: ${number}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
     }
+    setNewName("")
+    setNumber("")
   }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
 
-  const handlePhoneChange = (event) => {
-    setPhone(event.target.value)
+  const handleNumberChange = (event) => {
+    setNumber(event.target.value)
   }
   return (
     <div>
@@ -70,11 +67,11 @@ export const PersonForm = ({ persons, setPersons, setMessage }) => {
           />
         </p>
         <p>
-          phone:
+          Number:
           <input
-            value={phone}
-            onChange={handlePhoneChange}
-            className="phoneInput"
+            value={number}
+            onChange={handleNumberChange}
+            className="numberInput"
           />
         </p>
         <button type="submit">Add</button>
