@@ -38,11 +38,7 @@ app.get("/info", (request, response) => {
 
 app.get("/api/persons", (request, response) => {
   Entry.find({}).then((entries) => {
-    if (!Array.isArray(entries)) {
-      response.status(500).json({ error: "Unexpected format" })
-    } else {
-      response.json(entries)
-    }
+    response.json(entries)
   })
 })
 
@@ -65,11 +61,7 @@ app.put("/api/persons/:id", (request, response) => {
   }
   Entry.findByIdAndUpdate(request.params.id, updateEntry).then(
     (updateEntry) => {
-      if (updateEntry) {
-        response.json()
-      } else {
-        response.status(404).end()
-      }
+      response.json()
     }
   )
 })
