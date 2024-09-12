@@ -19,6 +19,8 @@ const errorHandler = (err, request, response, next) => {
 
   if (err.name === "CastError") {
     return response.status(400).send({ error: "Bad ID" })
+  } else if (err.name === "ValidationError") {
+    return response.status(400).json({ error: err.message })
   }
 
   next(err)
@@ -77,17 +79,13 @@ app.get("/api/persons/:id", (request, response, next) => {
 })
 
 app.put("/api/persons/:id", (request, response, next) => {
-  const body = request.body
+  const { name, phone } = request.body
 
-  if (!body.phone) {
-    return response.status(400).json({ error: "Number missing" })
-  }
-
-  const entry = {
-    name: body.name,
-    phone: body.phone,
-  }
-  Entry.findByIdAndUpdate(request.params.id, entry, { new: true })
+  Entry.findByIdAndUpdate(
+    request.params.id,
+    { name, phone },
+    { new: true, runValidators: true, context: "query" }
+  )
     .then((updateEntry) => {
       response.json(updateEntry)
     })
@@ -97,32 +95,15 @@ app.put("/api/persons/:id", (request, response, next) => {
 app.post("/api/persons", (request, response, next) => {
   const body = request.body
 
-  if (!body) {
-    return response.status(400).json({ error: "Data missing" })
-  }
-
-  if (!body.name) {
-    return response.status(400).json({
-      error: "Name is missing",
-    })
-  }
-  if (!body.phone) {
-    return response.status(400).json({
-      error: "Number is missing",
-    })
-  }
-  Entry.findOne({ name: body.name })
-    .then((existingEntry) => {
-      if (!existingEntry) {
-        const entry = new Entry({
-          name: body.name,
-          phone: body.phone,
-          id: generateId(),
-        })
-        entry.save()
-        return response.status(200).end()
-      }
-      return response.status(400).json({ error: "Name must be unique" })
+  const entry = new Entry({
+    name: body.name,
+    phone: body.phone,
+    id: generateId(),
+  })
+  entry
+    .save()
+    .then((savedEntry) => {
+      response.status(200).end()
     })
     .catch((err) => next(err))
 })
