@@ -36,6 +36,8 @@ app.get("/info", (request, response) => {
   })
 })
 
+//
+
 app.get("/api/persons", (request, response) => {
   Entry.find({}).then((entries) => {
     response.json(entries)
