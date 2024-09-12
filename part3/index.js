@@ -1,18 +1,40 @@
-require("dotenv").config()
 const express = require("express")
-const morgan = require("morgan")
-const cors = require("cors")
 const app = express()
+require("dotenv").config()
+
 const Entry = require("./models/entry")
 
-app.use(express.json())
-app.use(cors())
 app.use(express.static("dist"))
 
-const PORT = process.env.PORT
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`)
-})
+const requestLogger = (request, response, next) => {
+  console.log("Method:", request.method)
+  console.log("Path: ", request.path)
+  console.log("Body: ", request.body)
+  console.log("---")
+  next()
+}
+
+const errorHandler = (err, request, response, next) => {
+  console.error(err.message)
+
+  if (err.name === "CastError") {
+    return response.status(400).send({ error: "Bad ID" })
+  }
+
+  next(err)
+}
+
+const morgan = require("morgan")
+const cors = require("cors")
+
+app.use(cors())
+app.use(express.json())
+app.use(requestLogger)
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "Unknown endpoint" })
+}
+
 // morgan.token("req-body", (req) => {
 //   return JSON.stringify(req.body)
 // })
@@ -42,31 +64,33 @@ app.get("/api/persons", (request, response) => {
   })
 })
 
-app.get("/api/persons/:id", (request, response) => {
-  Entry.findById(request.params.id).then((entry) => {
-    response.json(entry)
-  })
-})
-
-app.put("/api/persons/:id", (request, response) => {
-  const body = request.body
-
-  const updateEntry = {
-    name: body.name,
-    phone: body.phone,
-  }
-  Entry.findByIdAndUpdate(request.params.id, updateEntry).then(
-    (updateEntry) => {
-      if (updateEntry) {
-        response.json()
+app.get("/api/persons/:id", (request, response, next) => {
+  Entry.findById(request.params.id)
+    .then((entry) => {
+      if (entry) {
+        response.json(entry)
       } else {
         response.status(404).end()
       }
-    }
-  )
+    })
+    .catch((err) => next(err))
 })
 
-app.post("/api/persons", (request, response) => {
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body
+
+  const entry = {
+    name: body.name,
+    phone: body.phone,
+  }
+  Entry.findByIdAndUpdate(request.params.id, entry, { new: true })
+    .then((updateEntry) => {
+      response.json(updateEntry)
+    })
+    .catch((err) => next(err))
+})
+
+app.post("/api/persons", (request, response, next) => {
   const body = request.body
 
   if (!body.name) {
@@ -79,22 +103,34 @@ app.post("/api/persons", (request, response) => {
       error: "Number is missing",
     })
   }
-  Entry.findOne({ name: body.name }).then((existingEntry) => {
-    if (!existingEntry) {
-      const entry = new Entry({
-        name: body.name,
-        phone: body.phone,
-        id: generateId(),
-      })
-      entry.save()
-      return response.status(200).end()
-    }
-    return response.status(400).json({ error: "Name must be unique" })
-  })
+  Entry.findOne({ name: body.name })
+    .then((existingEntry) => {
+      if (!existingEntry) {
+        const entry = new Entry({
+          name: body.name,
+          phone: body.phone,
+          id: generateId(),
+        })
+        entry.save()
+        return response.status(200).end()
+      }
+      return response.status(400).json({ error: "Name must be unique" })
+    })
+    .catch((err) => next(err))
 })
 
-app.delete("/api/persons/:id", (request, response) => {
-  Entry.findByIdAndDelete(request.params.id).then((deleteEntry) => {
-    response.status(204).end()
-  })
+app.delete("/api/persons/:id", (request, response, next) => {
+  Entry.findByIdAndDelete(request.params.id)
+    .then((deleteEntry) => {
+      response.status(204).end()
+    })
+    .catch((err) => next(err))
+})
+
+app.use(unknownEndpoint)
+app.use(errorHandler)
+
+const PORT = process.env.PORT
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`)
 })
