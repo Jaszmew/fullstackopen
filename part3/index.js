@@ -42,63 +42,63 @@ app.get("/api/persons", (request, response) => {
   })
 })
 
-app.get("/api/persons/:id", (request, response) => {
-  Entry.findById(request.params.id).then((entry) => {
-    if (entry) {
-      response.json(entry)
-    } else {
-      response.status(404).end()
-    }
-  })
-})
+// app.get("/api/persons/:id", (request, response) => {
+//   Entry.findById(request.params.id).then((entry) => {
+//     if (entry) {
+//       response.json(entry)
+//     } else {
+//       response.status(404).end()
+//     }
+//   })
+// })
 
-app.put("/api/persons/:id", (request, response) => {
-  const body = request.body
+// app.put("/api/persons/:id", (request, response) => {
+//   const body = request.body
 
-  const updateEntry = {
-    name: body.name,
-    phone: body.phone,
-  }
-  Entry.findByIdAndUpdate(request.params.id, updateEntry).then(
-    (updateEntry) => {
-      if (updateEntry) {
-        response.json()
-      } else {
-        response.status(404).end()
-      }
-    }
-  )
-})
+//   const updateEntry = {
+//     name: body.name,
+//     phone: body.phone,
+//   }
+//   Entry.findByIdAndUpdate(request.params.id, updateEntry).then(
+//     (updateEntry) => {
+//       if (updateEntry) {
+//         response.json()
+//       } else {
+//         response.status(404).end()
+//       }
+//     }
+//   )
+// })
 
-app.post("/api/persons", (request, response) => {
-  const body = request.body
+// app.post("/api/persons", (request, response) => {
+//   const body = request.body
 
-  if (!body.name) {
-    return response.status(400).json({
-      error: "Name is missing",
-    })
-  }
-  if (!body.phone) {
-    return response.status(400).json({
-      error: "Number is missing",
-    })
-  }
-  Entry.findOne({ name: body.name }).then((existingEntry) => {
-    if (!existingEntry) {
-      const entry = new Entry({
-        name: body.name,
-        phone: body.phone,
-        id: generateId(),
-      })
-      entry.save()
-      return response.status(200).end()
-    }
-    return response.status(400).json({ error: "Name must be unique" })
-  })
-})
+//   if (!body.name) {
+//     return response.status(400).json({
+//       error: "Name is missing",
+//     })
+//   }
+//   if (!body.phone) {
+//     return response.status(400).json({
+//       error: "Number is missing",
+//     })
+//   }
+//   Entry.findOne({ name: body.name }).then((existingEntry) => {
+//     if (!existingEntry) {
+//       const entry = new Entry({
+//         name: body.name,
+//         phone: body.phone,
+//         id: generateId(),
+//       })
+//       entry.save()
+//       return response.status(200).end()
+//     }
+//     return response.status(400).json({ error: "Name must be unique" })
+//   })
+// })
 
-app.delete("/api/persons/:id", (request, response) => {
-  Entry.findByIdAndDelete(request.params.id).then((deleteEntry) => {
-    response.status(204).end()
-  })
-})
+// app.delete("/api/persons/:id", (request, response) => {
+//   Entry.findByIdAndDelete(request.params.id).then((deleteEntry) => {
+//     response.status(204).end()
+//   })
+// })
