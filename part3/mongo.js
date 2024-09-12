@@ -10,16 +10,8 @@ mongoose.set("strictQuery", false)
 mongoose.connect(url)
 
 const phoneBookSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    minLength: 3,
-    required: true,
-  },
-  phone: {
-    type: String,
-    minLength: 6,
-    required: true,
-  },
+  name: String,
+  phone: String,
 })
 
 const Entry = mongoose.model("Entry", phoneBookSchema)
