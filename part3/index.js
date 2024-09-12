@@ -22,7 +22,7 @@ app.listen(PORT, () => {
 
 const generateId = () => {
   const randomId = Math.floor(Math.random() * 1000)
-  const letters = ["e", "b", "c"]
+  const letters = ["e", "b", "c", "g"]
   const randomLetters = letters[Math.floor(Math.random() * letters.length)]
   return String(randomId + randomLetters)
 }
@@ -46,7 +46,11 @@ app.get("/api/persons", (request, response) => {
 
 app.get("/api/persons/:id", (request, response) => {
   Entry.findById(request.params.id).then((entry) => {
-    response.json(entry)
+    if (entry) {
+      response.json(entry)
+    } else {
+      response.status(404).end()
+    }
   })
 })
 
@@ -59,11 +63,7 @@ app.put("/api/persons/:id", (request, response) => {
   }
   Entry.findByIdAndUpdate(request.params.id, updateEntry).then(
     (updateEntry) => {
-      if (updateEntry) {
-        response.json()
-      } else {
-        response.status(404).end()
-      }
+      response.json()
     }
   )
 })
