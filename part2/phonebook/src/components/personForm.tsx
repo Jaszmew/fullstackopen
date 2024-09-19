@@ -2,7 +2,7 @@ import React from "react"
 import { useState } from "react"
 import personsService from "../services/persons"
 
-export const PersonForm = ({ persons, setPersons, setMessage }) => {
+export const PersonForm = ({ persons, setPersons, setMessage, setType }) => {
   const [newName, setNewName] = useState("")
   const [phone, setPhone] = useState("")
 
@@ -13,12 +13,14 @@ export const PersonForm = ({ persons, setPersons, setMessage }) => {
         `${newName} is already in the phone book, replace their old number?`
       )
       await personsService.update(person.id, { ...person, phone: phone })
+      setType("successMessage")
       setMessage(`Updated number for ${person.name}`)
       setTimeout(() => {
         setMessage(null)
       }, 3000)
     } catch (err) {
-      console.log(err)
+      setType("errorMessage")
+      setMessage(err.response.data.error)
     }
   }
 
@@ -37,13 +39,19 @@ export const PersonForm = ({ persons, setPersons, setMessage }) => {
         phone: phone,
       }
       personsService
-        .create({ nameObject })
+        .create(nameObject)
         .then((data) => {
           setPersons(persons.concat(data))
         })
         .catch((err) => {
-          err.response.data.error
+          setType("errorMessage")
+          setMessage(err.response.data.error)
         })
+      setType("successMessage")
+      setMessage(`Added ${newName} with number: ${phone}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
     }
     setNewName("")
     setPhone("")

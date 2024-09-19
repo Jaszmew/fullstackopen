@@ -1,9 +1,12 @@
 import React from "react"
 
-export const Notification = ({ message }) => {
-  if (message === null) {
+export const Notification = ({ message, type }) => {
+  if (!message) {
     return null
   }
 
-  return <div className="error">{message}</div>
+  const notificationType =
+    type === "successMessage" ? "successMessage" : "errorMessage"
+
+  return <div className={notificationType}>{message}</div>
 }

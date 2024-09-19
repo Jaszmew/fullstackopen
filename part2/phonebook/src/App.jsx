@@ -9,6 +9,7 @@ import personsService from "./services/persons"
 const App = () => {
   const [persons, setPersons] = useState([])
   const [message, setMessage] = useState(null)
+  const [type, setType] = useState("")
 
   useEffect(() => {
     personsService.getAll().then((data) => {
@@ -21,7 +22,7 @@ const App = () => {
     <div>
       <h1>Phone book</h1>
 
-      <Notification message={message} />
+      <Notification message={message} type={type} />
 
       <Filter setFilter={setFilter} persons={persons} />
 
@@ -31,11 +32,17 @@ const App = () => {
         persons={persons}
         setPersons={setPersons}
         setMessage={setMessage}
+        setType={setType}
       />
 
       <h3>Numbers</h3>
 
-      <Persons persons={persons} filter={filter} setPersons={setPersons} />
+      <Persons
+        persons={persons}
+        filter={filter}
+        setMessage={setMessage}
+        setType={setType}
+      />
 
       <Footer />
     </div>

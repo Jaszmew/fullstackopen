@@ -1,14 +1,17 @@
 import React from "react"
 import personsService from "../services/persons"
 
-export const Persons = ({ persons, filter, setPersons }) => {
+export const Persons = ({ persons, filter, setMessage, setType }) => {
   const deletePerson = async (person) => {
     try {
       const id = person.id
       window.confirm(`Delete ${person.name}?`)
       await personsService.deleteData(id)
+      setType("successMessage")
+      setMessage(`${person.name} deleted successfully`)
     } catch (err) {
-      console.log(err)
+      setType("errorMessage")
+      setMessage(err.response.data.error)
     }
   }
 
