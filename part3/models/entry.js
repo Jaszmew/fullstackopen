@@ -16,13 +16,18 @@ mongoose
 const phoneBookSchema = new mongoose.Schema({
   name: {
     type: String,
-    minLength: 3,
-    required: true,
+    minLength: [3, "Not a valid name!"],
+    required: [true, "Name required!"],
   },
   phone: {
     type: String,
-    minLength: 6,
-    required: true,
+    validate: {
+      validator: function (number) {
+        return /^\d{2,3}-\d{5,}$/.test(number)
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
+    required: [true, "Phone number required!"],
   },
 })
 
