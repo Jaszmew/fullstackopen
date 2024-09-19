@@ -36,13 +36,14 @@ export const PersonForm = ({ persons, setPersons, setMessage }) => {
         name: newName,
         phone: phone,
       }
-      personsService.create(nameObject).then((data) => {
-        setPersons(persons.concat(data))
-      })
-      setMessage(`Added ${newName} with number: ${phone}`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 3000)
+      personsService
+        .create({ nameObject })
+        .then((data) => {
+          setPersons(persons.concat(data))
+        })
+        .catch((err) => {
+          err.response.data.error
+        })
     }
     setNewName("")
     setPhone("")

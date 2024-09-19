@@ -105,7 +105,9 @@ app.post("/api/persons", (request, response, next) => {
     .then((savedEntry) => {
       response.status(200).end()
     })
-    .catch((err) => next(err))
+    .catch((err) => {
+      next(err)
+    })
 })
 
 app.delete("/api/persons/:id", (request, response, next) => {
