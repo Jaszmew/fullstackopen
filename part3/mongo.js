@@ -22,7 +22,7 @@ const entry = new Entry({
 })
 
 if (process.argv[3] && process.argv[4]) {
-  entry.save().then((result) => {
+  entry.save().then(() => {
     console.log(
       `Added ${process.argv[3]}'s number ${process.argv[4]} to the phonebook`
     )

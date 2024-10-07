@@ -26,7 +26,7 @@ const errorHandler = (err, request, response, next) => {
   next(err)
 }
 
-const morgan = require("morgan")
+// const morgan = require("morgan")
 const cors = require("cors")
 
 app.use(cors())
@@ -102,7 +102,7 @@ app.post("/api/persons", (request, response, next) => {
   })
   entry
     .save()
-    .then((savedEntry) => {
+    .then(() => {
       response.status(200).end()
     })
     .catch((err) => {
