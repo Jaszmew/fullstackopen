@@ -3,56 +3,59 @@ const dummy = (blogs) => {
 }
 
 const totalLikes = (blogs) => {
-  if (!blogs || blogs.length === 0) {
-    return 0
-  }
-
-  if (blogs.length === 1) {
-    return blogs[0].likes
-  }
-
   return blogs.reduce((sum, blog) => sum + blog.likes, 0)
 }
 
 const favoriteBlog = (blogs) => {
-  if (!blogs || blogs.length === 0) {
-    return 0
-  }
-  const { title, author, likes } = blogs.reduce((mostLikes, blog) => {
-    return blog.likes > mostLikes.likes ? blog : mostLikes
-  })
-
-  return { title, author, likes }
+  return blogs.reduce((max, blog) => (max.likes > blog.likes ? max : blog), {})
 }
 
 const mostBlogs = (blogs) => {
-  const authorBlogs = blogs.reduce((authorCount, blog) => {
-    authorCount[blog.author] = (authorCount[blog.author] || 0) + 1
-    return authorCount
+  if (!blogs.length) {
+    return null
+  }
+
+  const authors = blogs.reduce((acc, blog) => {
+    acc[blog.author] = (acc[blog.author] || 0) + 1
+    return acc
   }, {})
 
-  const mostBlogsAuthor = Object.entries(authorBlogs).reduce(
-    (max, [author, count]) => {
-      return count > max.count ? { author, count } : max
-    },
-    { author: null, count: 0 }
-  )
-  return mostBlogsAuthor
+  let maxAuthor = Object.keys(authors)[0]
+
+  for (const author in authors) {
+    if (authors[author] > authors[maxAuthor]) {
+      maxAuthor = author
+    }
+  }
+
+  return {
+    author: maxAuthor,
+    blogs: authors[maxAuthor],
+  }
 }
 
 const mostLikes = (blogs) => {
-  const authorLikes = blogs.reduce((countLikes, blog) => {
-    countLikes[blog.author] = (countLikes[blog.author] || 0) + blog.likes
-    return countLikes
+  if (!blogs.length) {
+    return null
+  }
+
+  const authors = blogs.reduce((acc, blog) => {
+    acc[blog.author] = (acc[blog.author] || 0) + blog.likes
+    return acc
   }, {})
 
-  const mostLikesAuthor = Object.entries(authorLikes).reduce(
-    (max, [author, likes]) => {
-      return likes > max.likes ? { author, likes } : max
-    },
-    { author: null, likes: 0 }
-  )
-  return mostLikesAuthor
+  let maxAuthor = Object.keys(authors)[0]
+
+  for (const author in authors) {
+    if (authors[author] > authors[maxAuthor]) {
+      maxAuthor = author
+    }
+  }
+
+  return {
+    author: maxAuthor,
+    likes: authors[maxAuthor],
+  }
 }
 
 module.exports = {
