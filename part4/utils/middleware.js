@@ -19,7 +19,7 @@ const errorHandler = (error, request, response, next) => {
   logger.error(error.message)
 
   if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" })
+    return response.status(400).send({ error: "malformed id" })
   } else if (error.name === "ValidationError") {
     return response.status(400).json({ error: error.message })
   } else if (
@@ -46,7 +46,7 @@ const userExtractor = async (request, response, next) => {
   const token = getTokenFrom(request)
 
   if (!token) {
-    return response.status(401).json({ error: "token missimg" })
+    return response.status(401).json({ error: "token missing" })
   }
 
   const decodedToken = jwt.verify(token, process.env.SECRET)

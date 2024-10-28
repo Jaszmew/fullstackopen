@@ -165,8 +165,8 @@ test("Update non-existing blog", async () => {
 beforeEach(async () => {
   await User.deleteMany({})
 
-  const passwordHash = await bcrypt.hash("sekret", 10)
-  const user = new User({ username: "root", passwordHash })
+  const passwordHash = await bcrypt.hash("admin", 10)
+  const user = new User({ username: "admin", passwordHash })
 
   await user.save()
 })
@@ -175,9 +175,9 @@ test("creation succeeds with a fresh username", async () => {
   const usersAtStart = await helper.usersInDb()
 
   const newUser = {
-    username: "mluukkai",
-    name: "Matti Luukkainen",
-    password: "salainen",
+    username: "admin",
+    name: "admin",
+    password: "admin",
   }
 
   await api
