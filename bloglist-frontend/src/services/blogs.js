@@ -15,4 +15,21 @@ const create = async (newBlog) => {
   return response.data
 }
 
-export default { getAll, create }
+const update = async (id, updatedBlog) => {
+  const token = window.localStorage.getItem("loggedBlogUser")
+  const config = {
+    headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+  }
+  const response = await axios.put(`${baseUrl}/${id}`, updatedBlog, config)
+  return response.data
+}
+
+const remove = async (id) => {
+  const token = window.localStorage.getItem("loggedBlogUser")
+  const config = {
+    headers: { Authorization: `Bearer ${JSON.parse(token).token}` },
+  }
+  await axios.delete(`${baseUrl}/${id}`, config)
+}
+
+export default { getAll, create, update, remove }

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react"
 import Blog from "./components/Blog"
 import LoginForm from "./components/LoginForm"
-import BlogForm from "./components/BlogForm"
 import Notification from "./components/Notification"
 import blogService from "./services/blogs"
+import NewBlogSection from "./components/AddNewBlog"
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -22,7 +22,8 @@ const App = () => {
   const fetchBlogs = async () => {
     try {
       const blogs = await blogService.getAll()
-      setBlogs(blogs)
+      const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+      setBlogs(sortedBlogs)
     } catch (e) {
       showNotification("Failed to load blogs", "error")
       console.log(e)
@@ -40,6 +41,40 @@ const App = () => {
     setUser(null)
     window.localStorage.removeItem("loggedBlogUser")
     showNotification("Logged out", "success")
+  }
+
+  const handleLike = async (blog) => {
+    try {
+      const updatedBlog = { ...blog, likes: blog.likes + 1 }
+      const returnedBlog = await blogService.update(blog.id, updatedBlog)
+
+      setBlogs((previousBlogs) =>
+        previousBlogs
+          .map((b) => (b.id === returnedBlog.id ? returnedBlog : b))
+          .sort((a, b) => b.likes - a.likes)
+      )
+      showNotification("Blog liked", "success")
+    } catch (e) {
+      showNotification("Like failed", "error")
+      console.log(e)
+    }
+  }
+
+  const handleDelete = async (blog) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete "${blog.title}" by ${blog.author}?`
+      )
+    ) {
+      try {
+        await blogService.remove(blog.id)
+        setBlogs(blogs.filter((b) => b.id !== blog.id))
+        showNotification(`Blog "${blog.title}" deleted`, "success")
+      } catch (error) {
+        showNotification("Failed to delete blog", "error")
+        console.error(error)
+      }
+    }
   }
 
   const addNewBlog = async (newBlog) => {
@@ -70,9 +105,15 @@ const App = () => {
         <div>
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>Logout</button>
-          <BlogForm onNewBlog={addNewBlog} />
+          <NewBlogSection addNew={addNewBlog} />
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              onLike={handleLike}
+              onDelete={handleDelete}
+              user={user}
+            />
           ))}
         </div>
       )}
